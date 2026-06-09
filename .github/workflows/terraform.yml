@@ -50,6 +50,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - run: terraform state list
+      - run: terraform validate
       #- run: terraform init
       #- run: terraform plan
       #- run: terraform apply -auto-approve
