@@ -25,10 +25,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      #- run: terraform init
+      - run: terraform init
+      - run: terraform plan
+      - run: terraform apply -auto-approve
       - run: echo 'bootstrap done'
-      #- run: terraform state list
-      #- run: terraform apply -auto-approve
 
   infrastructure:
     name: Deploy Infrastructure
@@ -50,10 +50,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - run: echo 'bootstrap done'
-      - run: terraform destroy
-      #- run: terraform state list
+      - run: terraform init
       #- run: terraform validate
       
-      #- run: terraform plan -lock-timeout=300s
-      #- run: terraform apply -auto-approve -lock-timeout=300s
+      - run: terraform plan
+      - run: terraform apply -auto-approve
+      - run: echo 'terraform done'     
