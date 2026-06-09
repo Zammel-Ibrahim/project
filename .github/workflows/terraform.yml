@@ -2,7 +2,12 @@
 name: Terraform Pipeline
 
 on:
-  workflow_dispatch:   # ✅ manual trigger
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Action to perform (apply or destroy)"
+        required: true
+        default: "apply"
 
 jobs:
 
@@ -15,44 +20,67 @@ jobs:
         working-directory: infra/bootstrap
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - run: terraform init
-      - run: terraform plan
-      - run: terraform apply -auto-approve
-      - run: echo 'bootstrap done'
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply Bootstrap
+        run: terraform apply -auto-approve
 
   infrastructure:
     name: Deploy Infrastructure
     runs-on: ubuntu-latest
     needs: bootstrap
 
+    # ✅ prevent concurrent execution (VERY IMPORTANT)
+    concurrency:
+      group: terraform-${{ github.ref }}
+      cancel-in-progress: false
+
     defaults:
       run:
         working-directory: infra/terraform
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-east-1
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - run: terraform init
-      #- run: terraform validate
-      
-      - run: terraform plan
-      - run: terraform apply -auto-approve
-      - run: echo 'terraform done'     
+      - name: Terraform Init
+        run: terraform init -reconfigure
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: ${{ github.event.inputs.action == 'apply' }}
+        run: terraform plan -lock-timeout=300s
+
+      - name: Terraform Apply
+        if: ${{ github.event.inputs.action == 'apply' }}
+        run: terraform apply -auto-approve -lock-timeout=300s
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.action == 'destroy' }}
+        run: terraform destroy -auto-approve -lock-timeout=300s
