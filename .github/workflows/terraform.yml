@@ -51,9 +51,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - run: echo 'bootstrap done'
-      - run: terraform init
+      - run: terraform destroy
       #- run: terraform state list
       #- run: terraform validate
       
-      - run: terraform plan -lock-timeout=300s
-      - run: terraform apply -auto-approve -lock-timeout=300s
+      #- run: terraform plan -lock-timeout=300s
+      #- run: terraform apply -auto-approve -lock-timeout=300s
