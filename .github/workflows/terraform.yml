@@ -55,5 +55,5 @@ jobs:
       #- run: terraform state list
       #- run: terraform validate
       
-      - run: terraform plan lock-timeout=300s
-      - run: terraform apply -auto-approve lock-timeout=300s
+      - run: terraform plan -lock-timeout=300s
+      - run: terraform apply -auto-approve -lock-timeout=300s
