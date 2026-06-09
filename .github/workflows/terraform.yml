@@ -51,9 +51,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - run: echo 'bootstrap done'
-      #- run: terraform init
+      - run: terraform init
       #- run: terraform state list
       #- run: terraform validate
       
-      #- run: terraform plan
-      #- run: terraform apply -auto-approve
+      - run: terraform plan
+      - run: terraform apply -auto-approve
