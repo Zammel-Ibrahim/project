@@ -1,0 +1,19 @@
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+
+.terraform/
+*.tfstate
+*.tfvars

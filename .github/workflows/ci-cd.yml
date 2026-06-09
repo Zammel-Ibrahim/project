@@ -1,0 +1,19 @@
+name: Check OS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  show-os:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: OS via GitHub Actions
+        run: echo "Runner 1  OS = ${{ runner.os }}"
+  display-os:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: OS via GitHub Actions
+        run: echo "Runner 2  OS = ${{ runner.os }}"
