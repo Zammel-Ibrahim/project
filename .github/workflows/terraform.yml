@@ -75,12 +75,12 @@ jobs:
 
       - name: Terraform Plan
         if: ${{ github.event.inputs.action == 'apply' }}
-        run: terraform plan -lock-timeout=300s
+        run: terraform plan
 
       - name: Terraform Apply
         if: ${{ github.event.inputs.action == 'apply' }}
-        run: terraform apply -auto-approve -lock-timeout=300s
+        run: terraform apply -auto-approve
 
       - name: Terraform Destroy
         if: ${{ github.event.inputs.action == 'destroy' }}
-        run: terraform destroy -auto-approve -lock-timeout=300s
+        run: terraform destroy -auto-approve
